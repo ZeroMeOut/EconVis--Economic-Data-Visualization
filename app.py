@@ -6,6 +6,7 @@ from datetime import date
 import time
 from model import *
 
+st.set_page_config(layout="wide")
 st.title("Country Economic Analysis and Forecasting")
 st.write("\n")
 st.write("\n")

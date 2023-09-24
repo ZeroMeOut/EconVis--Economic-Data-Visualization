@@ -38,15 +38,25 @@ def plot_actual_predicted(df, df_pred, plot_title, column, y_title = 'US$'):
 
     # Create the layout
     layout = go.Layout(
-        xaxis=dict(title='Year'),
-        yaxis=dict(title=y_title),
+        xaxis=dict(title='Year', fixedrange=True),
+        yaxis=dict(title=y_title, fixedrange=True),
         title= plot_title,
-        showlegend=True
+        showlegend=True,
     )
 
     # Create the figure
     fig = go.Figure(data=[actual_trace, predicted_trace, line_trace], layout=layout)
-    config = {'staticPlot': True}
+    fig.update_layout(legend=dict(
+        yanchor="top",
+        y=0.99,
+        xanchor="left",
+        x=0.01
+    ))
+    config = {'modeBarButtonsToRemove': [ 'zoom', 'pan', 
+                                         'select', 'zoomIn', 
+                                         'zoomOut', 'autoScale', 
+                                         'resetScale'],
+                                         }
 
     # Display the figure using Streamlit
     st.plotly_chart(fig, use_container_width=True, config=config)
@@ -65,7 +75,7 @@ if 'economyID' not in st.session_state:
     st.session_state['economyID'] = economyID
 
 input = st.text_input('Input Country Here')
-forcast = st.text_input('Input Future Year (not more than 50 years in the future)')
+forcast = st.text_input('Input Future Year (not more than 50 years into the future)')
 
 if input:
     result = -1
@@ -106,10 +116,14 @@ if input:
                         plot_actual_predicted(ECONOMY, UMP_df, 'Unemployment Rate', 'SL.UEM.TOTL.ZS', y_title = 'Percent(%)')
                         plot_actual_predicted(ECONOMY, EXP_df, 'Total Exports', 'NE.EXP.GNFS.CD')
                 else:
-                    st.write("Not more than 50 years")
+                    st.write("Bruh not more than 50 years")
 
             else:
-                st.write("Invalid input")
+                if checker is False:
+                    st.write("No strings or decimals!!!")
+                
+                else:
+                    st.write(f"Input a year higher than {year}")
 
     else:
         st.write("Country not found")

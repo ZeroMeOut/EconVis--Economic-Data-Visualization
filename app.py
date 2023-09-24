@@ -1,5 +1,4 @@
 import streamlit as st
-import numpy as np
 import plotly.graph_objects as go
 import wbgapi as wb
 from datetime import date
@@ -47,9 +46,10 @@ def plot_actual_predicted(df, df_pred, plot_title, column, y_title = 'US$'):
 
     # Create the figure
     fig = go.Figure(data=[actual_trace, predicted_trace, line_trace], layout=layout)
+    config = {'staticPlot': True}
 
     # Display the figure using Streamlit
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, use_container_width=True, config=config)
 
 economylist = []
 economyID = []
@@ -65,7 +65,7 @@ if 'economyID' not in st.session_state:
     st.session_state['economyID'] = economyID
 
 input = st.text_input('Input Country Here')
-forcast = st.text_input('Input Forcast Years')
+forcast = st.text_input('Input Future Year (not more than 50 years in the future)')
 
 if input:
     result = -1
@@ -74,35 +74,42 @@ if input:
         if value == input.lower():
             result = index
             break
+
     if result != -1:
+
         if forcast:
             checker = forcast.isdigit()
+            today = date.today()
+            year = today.year
 
-            if checker is True and int(forcast) != 0:
-                today = date.today()
-                year = today.year
-                ECONOMY, GDP_df, EXP_df, IMP_df, UMP_df = model(st.session_state['economyID'][result], 2000, year, forcast_years = int(forcast))
+            if checker is True and int(forcast) > year:
+                diff = year - int(forcast)
 
-                progress_text = "Operation in progress. Please wait."
-                my_bar = st.progress(0, text=progress_text)
+                if diff <= 50:
+                    ECONOMY, GDP_df, EXP_df, IMP_df, UMP_df = model(st.session_state['economyID'][result], 2000, year, forcast_years = diff)
+                    progress_text = "Beep Boop Loading Plots"
+                    my_bar = st.progress(0, text=progress_text)
 
-                for percent_complete in range(100):
-                    time.sleep(0.01)
-                    my_bar.progress(percent_complete + 1, text=progress_text)
-                time.sleep(1)
-                my_bar.empty()
+                    for percent_complete in range(100):
+                        time.sleep(0.01)
+                        my_bar.progress(percent_complete + 1, text=progress_text)
+                    time.sleep(1)
+                    my_bar.empty()
 
-                col1, col2 = st.columns(2)
-                
-                with col1:    
-                    plot_actual_predicted(ECONOMY, GDP_df, 'GDP', 'NY.GDP.MKTP.CD')
-                    plot_actual_predicted(ECONOMY, IMP_df, 'Total Imports', 'NE.IMP.GNFS.CD')
-                
-                with col2:          
-                    plot_actual_predicted(ECONOMY, UMP_df, 'Unemployment Rate', 'SL.UEM.TOTL.ZS', y_title = 'Percent(%)')
-                    plot_actual_predicted(ECONOMY, EXP_df, 'Total Exports', 'NE.EXP.GNFS.CD')
+                    col1, col2 = st.columns(2)
+                    
+                    with col1:    
+                        plot_actual_predicted(ECONOMY, GDP_df, 'GDP', 'NY.GDP.MKTP.CD')
+                        plot_actual_predicted(ECONOMY, IMP_df, 'Total Imports', 'NE.IMP.GNFS.CD')
+                    
+                    with col2:          
+                        plot_actual_predicted(ECONOMY, UMP_df, 'Unemployment Rate', 'SL.UEM.TOTL.ZS', y_title = 'Percent(%)')
+                        plot_actual_predicted(ECONOMY, EXP_df, 'Total Exports', 'NE.EXP.GNFS.CD')
+                else:
+                    st.write("Not more than 50 years")
+
             else:
-                st.write("Invalid forcast input")
+                st.write("Invalid input")
 
     else:
         st.write("Country not found")

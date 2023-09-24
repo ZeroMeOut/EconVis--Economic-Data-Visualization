@@ -1,5 +1,5 @@
 import wbgapi as wb
-from datetime import datetime, date
+from datetime import datetime
 import pandas as pd
 from statsmodels.tsa.arima.model import ARIMA
 from statsmodels.tsa.stattools import adfuller
@@ -12,7 +12,8 @@ def model(id, first_year, last_year, forcast_years = 3):
         datetime_obj = datetime.strptime(date_str, date_format)
         return datetime_obj
 
-    ECONOMY = wb.data.DataFrame(['NY.GDP.MKTP.CD', 'NE.EXP.GNFS.CD', 'NE.IMP.GNFS.CD', 'SL.UEM.TOTL.ZS'], id, range(first_year, last_year)).transpose().reset_index().rename(columns={'index':'years'})
+    ECONOMY = wb.data.DataFrame(['NY.GDP.MKTP.CD', 'NE.EXP.GNFS.CD', 'NE.IMP.GNFS.CD', 'SL.UEM.TOTL.ZS'], 
+                                id, range(first_year, last_year)).transpose().reset_index().rename(columns={'index':'years'})
     
     if ECONOMY['NY.GDP.MKTP.CD'].isna().sum() != 0:
         mean_ECONOMY = ECONOMY['NY.GDP.MKTP.CD'].mean()

@@ -83,7 +83,7 @@ if input:
             year = today.year
 
             if checker is True and int(forcast) > year:
-                diff = year - int(forcast)
+                diff = int(forcast) - year
 
                 if diff <= 50:
                     ECONOMY, GDP_df, EXP_df, IMP_df, UMP_df = model(st.session_state['economyID'][result], 2000, year, forcast_years = diff)

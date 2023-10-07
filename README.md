@@ -24,7 +24,7 @@ Follow these steps to set up and run the EconVis project locally:
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/yourusername/EconVis.git
+   git clone https://github.com/ZeroMeOut/EconVis.git
    cd EconVis
 
 2. Install dependencies:

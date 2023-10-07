@@ -32,4 +32,17 @@ Follow these steps to set up and run the EconVis project locally:
    ```bash
    pip install -r requirements.txt
 
+### Running the App
+
+Run the Streamlit app:
+
+   ```bash
+   streamlit run app.py
+```
+
+Visit http://localhost:8501 in your browser to interact with the EconVis application.
+
+### Contributing
+The model and prediction could be better. If you like to contribute please feel free to do so.
+
 
